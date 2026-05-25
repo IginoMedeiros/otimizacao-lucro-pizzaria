@@ -1,0 +1,69 @@
+# [DOC-D05] docker-compose.yml
+# --------------------------------
+# Orquestra os dois serviços da aplicação (frontend + backend).
+#
+# Serviços:
+#   backend  → FastAPI + PuLP na porta 8000
+#   frontend → Vue 3 + Nginx na porta 80
+#
+# Rede interna:
+#   pizza-net → permite que o Nginx (frontend) acesse o backend
+#   pelo hostname 'backend' sem expor a porta 8000 publicamente
+#
+# Como usar:
+#   1. cp .env.example .env && editar ANTHROPIC_API_KEY
+#   2. docker compose up --build
+#   3. Acessar http://localhost
+#      Swagger: http://localhost:8000/docs (em dev — porta exposta)
+
+services:
+
+  # --------------------------------------------------------------------------
+  # Backend — FastAPI + PuLP
+  # --------------------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: pizza-optimizer-backend
+    restart: unless-stopped
+    env_file:
+      - .env                          # ANTHROPIC_API_KEY e outras variáveis
+    environment:
+      - PYTHONUNBUFFERED=1            # Logs em tempo real no terminal
+    ports:
+      - "8000:8000"                   # Expõe Swagger em dev (opcional em prod)
+    networks:
+      - pizza-net
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  # --------------------------------------------------------------------------
+  # Frontend — Vue 3 + Vite build + Nginx
+  # --------------------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: pizza-optimizer-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"                       # Aplicação acessível em http://localhost
+    networks:
+      - pizza-net
+    depends_on:
+      backend:
+        condition: service_healthy    # Aguarda backend estar saudável
+
+# --------------------------------------------------------------------------
+# Rede interna entre os serviços
+# --------------------------------------------------------------------------
+networks:
+  pizza-net:
+    driver: bridge
+    name: pizza-net

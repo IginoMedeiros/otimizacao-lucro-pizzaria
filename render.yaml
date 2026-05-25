@@ -1,0 +1,29 @@
+# render.yaml
+# ------------
+# Arquivo de configuração do Render para deploy automático do backend.
+#
+# O Render detecta este arquivo na raiz do repositório e configura
+# o serviço automaticamente — sem precisar preencher tudo no dashboard.
+#
+# Documentação: https://render.com/docs/render-yaml-reference
+
+services:
+  - type: web
+    name: pizza-optimizer-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon          # região mais estável do plano gratuito
+    branch: main
+
+    # Variáveis de ambiente — os valores serão preenchidos no dashboard
+    # NUNCA coloque valores reais aqui (este arquivo vai para o GitHub)
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false           # Render pede o valor manualmente no dashboard
+      - key: CORS_ORIGINS
+        sync: false           # será preenchido com a URL do Vercel
+
+    # Health check — Render usa para saber se o serviço está saudável
+    healthCheckPath: /health

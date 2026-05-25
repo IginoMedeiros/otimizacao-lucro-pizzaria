@@ -1,0 +1,119 @@
+/*
+ * style.css
+ * ----------
+ * Estilos globais da aplicação Pizza Optimizer.
+ *
+ * - Importa Tailwind CSS v4 (diretiva @import)
+ * - Define design tokens (cores, fontes, sombras) como CSS custom properties
+ * - Garante consistência visual entre todos os componentes
+ * - Tema: minimalista, escuro (dark-first), paleta verde-esmeralda + branco
+ */
+
+@import "tailwindcss";
+
+/* -------------------------------------------------------------------------
+   Design Tokens — variáveis globais de design
+   ------------------------------------------------------------------------- */
+:root {
+  /* Paleta principal */
+  --color-brand:        #10b981; /* emerald-500  — verde primário */
+  --color-brand-dark:   #059669; /* emerald-600  — hover/active  */
+  --color-brand-light:  #d1fae5; /* emerald-100  — fundo suave   */
+
+  /* Superfícies (tema escuro) */
+  --color-surface:      #0f172a; /* slate-900    — fundo geral   */
+  --color-surface-card: #1e293b; /* slate-800    — fundo de card */
+  --color-surface-line: #334155; /* slate-700    — bordas/linhas */
+
+  /* Texto */
+  --color-text-primary:   #f1f5f9; /* slate-100 */
+  --color-text-secondary: #94a3b8; /* slate-400 */
+  --color-text-muted:     #64748b; /* slate-500 */
+
+  /* Feedback */
+  --color-success: #10b981;
+  --color-error:   #ef4444;
+  --color-warning: #f59e0b;
+
+  /* Tipografia */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Raios de borda */
+  --radius-sm:  0.375rem;
+  --radius-md:  0.75rem;
+  --radius-lg:  1rem;
+  --radius-xl:  1.5rem;
+
+  /* Sombras */
+  --shadow-card: 0 4px 24px 0 rgba(0, 0, 0, 0.4);
+  --shadow-glow: 0 0 24px 0 rgba(16, 185, 129, 0.15);
+}
+
+/* -------------------------------------------------------------------------
+   Reset e base
+   ------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* -------------------------------------------------------------------------
+   Utilitários customizados
+   ------------------------------------------------------------------------- */
+
+/* Card padrão */
+.card {
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-surface-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 1.5rem;
+}
+
+/* Animação de fade-in para resultados */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Spinner de carregamento */
+.spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--color-surface-line);
+  border-top-color: var(--color-brand);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Scrollbar personalizada (webkit) */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-surface); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-line);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-brand); }
